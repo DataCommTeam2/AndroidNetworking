@@ -8,16 +8,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity
         implements OnMapReadyCallback,
@@ -28,11 +26,14 @@ public class MapsActivity extends FragmentActivity
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private Handler mHandler;
-    private int mInterval = 5000;
+    private long mInterval = 5000;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        mHandler = new Handler();
 
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -40,11 +41,20 @@ public class MapsActivity extends FragmentActivity
                     .addApi(LocationServices.API)
                     .build();
         }
+        mGoogleApiClient.connect();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
     }
+
+    @Override
+    protected void onDestroy() {
+        mGoogleApiClient.disconnect();
+        super.onDestroy();
+    }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -74,16 +84,20 @@ public class MapsActivity extends FragmentActivity
         @Override
         public void run() {
             if (ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
+                    == PackageManager.PERMISSION_GRANTED) {
                 Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
                 if(location != null) {
-                    String text = location.getLatitude() + "|" + location.getLongitude();
-                    Toast toast = Toast.makeText(getApplication(), text, Toast.LENGTH_LONG);
-                    toast.show();
+                    final String text = location.getLatitude() + "|" + location.getLongitude();
+
+                    MapsActivity.this.runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(MapsActivity.this, text, Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
             }
-                mHandler.postDelayed(mGetLocation, mInterval);
+
+            mHandler.postDelayed(mGetLocation, mInterval);
 
         }
     };
