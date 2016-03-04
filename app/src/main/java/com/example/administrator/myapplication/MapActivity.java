@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -17,6 +18,11 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Calendar;
 
 public class MapActivity extends FragmentActivity
         implements OnMapReadyCallback,
@@ -32,7 +38,7 @@ public class MapActivity extends FragmentActivity
     private String mName;
     private String mIp;
     private String mPort;
-
+    private String mId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +48,7 @@ public class MapActivity extends FragmentActivity
         mName = intent.getStringExtra("name");
         mIp = intent.getStringExtra("ip");
         mPort = intent.getStringExtra("port");
+        mId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         mHandler = new Handler();
 
@@ -96,8 +103,21 @@ public class MapActivity extends FragmentActivity
                     == PackageManager.PERMISSION_GRANTED) {
                 Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                 if(location != null) {
-                    final String text = location.getLatitude() + "|" + location.getLongitude();
+                    String time = Calendar.getInstance().getTime().toString(); ;
+                    JSONObject out = new JSONObject();
 
+                    try {
+                        out.put("Lat", location.getLatitude());
+                        out.put("Long", location.getLongitude());
+                        out.put("Name", mName);
+                        out.put("Time", time);
+                        out.put("ID", mId);
+                        final String text = time + "|" + location.getLatitude() + "|" + location.getLongitude();
+                    }catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    final String text = out.toString();
                     MapActivity.this.runOnUiThread(new Runnable() {
                         public void run() {
                             Toast.makeText(MapActivity.this, text, Toast.LENGTH_LONG).show();
