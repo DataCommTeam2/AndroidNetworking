@@ -10,8 +10,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -19,9 +17,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.Socket;
 import java.util.Calendar;
 
 public class MapActivity extends FragmentActivity
@@ -33,12 +34,12 @@ public class MapActivity extends FragmentActivity
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private Handler mHandler;
-    private long mInterval = 5000;
+    private long mInterval = 10000;
 
     private String mName;
-    private String mIp;
-    private String mPort;
     private String mId;
+    private DataOutputStream out;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,9 +47,18 @@ public class MapActivity extends FragmentActivity
 
         Intent intent = getIntent();
         mName = intent.getStringExtra("name");
-        mIp = intent.getStringExtra("ip");
-        mPort = intent.getStringExtra("port");
         mId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        String mIp = intent.getStringExtra("ip");
+        String mPort = intent.getStringExtra("port");
+
+        try {
+            Socket client = new Socket(mIp, Integer.parseInt(mPort));
+            OutputStream outToServer = client.getOutputStream();
+            out = new DataOutputStream(outToServer);
+        } catch(IOException e){
+            e.printStackTrace();
+        }
 
         mHandler = new Handler();
 
@@ -101,33 +111,27 @@ public class MapActivity extends FragmentActivity
         public void run() {
             if (ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
+
                 Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                 if(location != null) {
                     String time = Calendar.getInstance().getTime().toString(); ;
-                    JSONObject out = new JSONObject();
+                    JSONObject json = new JSONObject();
 
                     try {
-                        out.put("Lat", location.getLatitude());
-                        out.put("Long", location.getLongitude());
-                        out.put("Name", mName);
-                        out.put("Time", time);
-                        out.put("ID", mId);
-                        final String text = time + "|" + location.getLatitude() + "|" + location.getLongitude();
-                    }catch (JSONException e) {
+                        json.put("Lat", location.getLatitude());
+                        json.put("Long", location.getLongitude());
+                        json.put("Name", mName);
+                        json.put("Time", time);
+                        json.put("ID", mId);
+
+                        out.writeUTF(out.toString());
+                    }catch (Exception e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    final String text = out.toString();
-                    MapActivity.this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toast.makeText(MapActivity.this, text, Toast.LENGTH_LONG).show();
-                        }
-                    });
                 }
             }
-
             mHandler.postDelayed(mGetLocation, mInterval);
-
         }
     };
 
