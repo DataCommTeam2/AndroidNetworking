@@ -13,16 +13,16 @@ import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
 import java.util.Calendar;
 
 public class MapActivity extends FragmentActivity
@@ -33,13 +33,12 @@ public class MapActivity extends FragmentActivity
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
-    private Handler mHandler;
+    private Handler mHandler = new Handler();
     private long mInterval = 10000;
 
     private String mName;
     private String mId;
-    private DataOutputStream out;
-
+    private boolean centered = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,18 +48,8 @@ public class MapActivity extends FragmentActivity
         mName = intent.getStringExtra("name");
         mId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        String mIp = intent.getStringExtra("ip");
-        String mPort = intent.getStringExtra("port");
 
-        try {
-            Socket client = new Socket(mIp, Integer.parseInt(mPort));
-            OutputStream outToServer = client.getOutputStream();
-            out = new DataOutputStream(outToServer);
-        } catch(IOException e){
-            e.printStackTrace();
-        }
-
-        mHandler = new Handler();
+        new NetworkTask().execute(intent.getStringExtra("ip"),intent.getStringExtra("port"));
 
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -68,7 +57,6 @@ public class MapActivity extends FragmentActivity
                     .addApi(LocationServices.API)
                     .build();
         }
-        mGoogleApiClient.connect();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -96,24 +84,36 @@ public class MapActivity extends FragmentActivity
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     1);
-        } else if (mMap != null) {
+        } else {
             mMap.setMyLocationEnabled(true);
+            mGoogleApiClient.connect();
         }
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) throws SecurityException{
+            if (permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mMap.setMyLocationEnabled(true);
+                mGoogleApiClient.connect();
+            }
+        }
 
     @Override
-    public void onConnected(Bundle connectionHint) {
+    public void onConnected(Bundle connectionHint) throws SecurityException{
         mGetLocation.run();
     }
 
     Runnable mGetLocation = new Runnable() {
         @Override
-        public void run() {
-            if (ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
+        public void run() throws SecurityException{{
 
                 Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                 if(location != null) {
+                    if(!centered) {
+                        LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current,15));
+                        centered = true;
+                    }
                     String time = Calendar.getInstance().getTime().toString(); ;
                     JSONObject json = new JSONObject();
 
@@ -124,8 +124,8 @@ public class MapActivity extends FragmentActivity
                         json.put("Time", time);
                         json.put("ID", mId);
 
-                        out.writeUTF(out.toString());
-                    }catch (Exception e) {
+                        new NetworkTask().execute(json.toString());
+                    }catch (JSONException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
