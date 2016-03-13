@@ -15,9 +15,8 @@
         android:hint="Name"
         android:ems="10"
         android:id="@+id/name"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="120dp" />
+        android:layout_above="@+id/ip"
+        android:layout_centerHorizontal="true" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -26,7 +25,7 @@
         android:hint="IP Address"
         android:ems="10"
         android:id="@+id/ip"
-        android:layout_below="@+id/name"
+        android:layout_above="@+id/port"
         android:layout_centerHorizontal="true" />
 
     <EditText
@@ -36,8 +35,9 @@
         android:hint="Port Number"
         android:ems="10"
         android:id="@+id/port"
-        android:layout_below="@+id/ip"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/ip"
+        android:layout_alignStart="@+id/ip" />
 
     <Button
         android:layout_width="wrap_content"

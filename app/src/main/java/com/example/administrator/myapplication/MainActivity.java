@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("ip", message);
 
         editText = (EditText) findViewById(R.id.port);
-        message = editText.getText().toString();
+        message = 0 + editText.getText().toString();
         intent.putExtra("port", message);
 
         startActivity(intent);
