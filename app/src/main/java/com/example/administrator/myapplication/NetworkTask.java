@@ -1,9 +1,7 @@
 package com.example.administrator.myapplication;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Network;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -34,8 +32,7 @@ import java.net.SocketTimeoutException;
 --
 ---------------------------------------------------------------------------------*/
 public class NetworkTask extends AsyncTask<String, Void, Boolean>{
-
-    private ProgressDialog progress = null;
+    
 	static private BufferedWriter out = null;
 	Socket client;
 	Context context;
