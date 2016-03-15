@@ -98,7 +98,7 @@ public class MapActivity extends FragmentActivity
         mId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
 		//establishes a connection with the server
-        new NetworkTask().execute(intent.getStringExtra("ip"),intent.getStringExtra("port"));
+        new NetworkTask(getApplicationContext()).execute(intent.getStringExtra("ip"),intent.getStringExtra("port"));
 		
 		//initializes google api client
         if (mGoogleApiClient == null) {
@@ -223,8 +223,9 @@ public class MapActivity extends FragmentActivity
 	---------------------------------------------------------------------------------*/
 	@Override
     protected void onDestroy() {
+		super.onDestroy();
         mGoogleApiClient.disconnect();
-        super.onDestroy();
+		new NetworkTask(getApplicationContext()).execute();
     }
 	
 	/*---------------------------------------------------------------------------------
@@ -293,7 +294,7 @@ public class MapActivity extends FragmentActivity
                         json.put("Time", time);
                         json.put("ID", mId);
 
-                        new NetworkTask().execute(json.toString());
+                        new NetworkTask(getApplicationContext()).execute(json.toString());
                     }catch (JSONException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -304,9 +305,47 @@ public class MapActivity extends FragmentActivity
         }
     };
 
+	/*---------------------------------------------------------------------------------
+	--	METHOD:     onMyLocationButtonClick
+	--
+	--	DATE:		March 14, 2014
+	--
+	--	DESIGNER:	Tom Tang
+	--
+	--	PROGRAMMER:	Tom Tang
+	--
+	--	INTERFACE:	public boolean onMyLocationButtonClick()
+	--
+	--  PARAMETERS: void
+	--
+	--	RETURNS:	If the listener has consumed the event
+	--
+	--	NOTES:
+	--	Listener method for my location button click
+	--
+	---------------------------------------------------------------------------------*/
     @Override
     public boolean onMyLocationButtonClick() {return false;}
 
+	/*---------------------------------------------------------------------------------
+	--	METHOD:     onConnectionSuspended
+	--
+	--	DATE:		March 14, 2014
+	--
+	--	DESIGNER:	Tom Tang
+	--
+	--	PROGRAMMER:	Tom Tang
+	--
+	--	INTERFACE:	public void onConnectionSuspended(int k){}
+	--
+	--  PARAMETERS: int cause The reason for the disconnection
+	--
+	--	RETURNS:	void
+	--
+	--	NOTES:
+	--	Callback method for connection suspended
+	--
+	---------------------------------------------------------------------------------*/
     @Override
-    public void onConnectionSuspended(int k){}
+    public void onConnectionSuspended(int cause){}
 }
