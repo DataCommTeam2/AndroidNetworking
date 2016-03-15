@@ -1,15 +1,19 @@
 package com.example.administrator.myapplication;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Network;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
+import java.net.SocketTimeoutException;
 
 /*---------------------------------------------------------------------------------
 --	CLASS FILE:	    NetworkTask.java -
@@ -31,6 +35,7 @@ import java.io.OutputStreamWriter;
 ---------------------------------------------------------------------------------*/
 public class NetworkTask extends AsyncTask<String, Void, Boolean>{
 
+    private ProgressDialog progress = null;
 	static private BufferedWriter out = null;
 	Socket client;
 	Context context;
@@ -77,20 +82,24 @@ public class NetworkTask extends AsyncTask<String, Void, Boolean>{
 	---------------------------------------------------------------------------------*/
     protected Boolean doInBackground(String... input) {
         try {
-            if(input.length == 2) {
-                client = new Socket(input[0], Integer.parseInt(input[1]));
-				if(!client.isConnected()){
+			if (input.length == 2) {
+				//client = new Socket(input[0], Integer.parseInt(input[1]));
+                client = new Socket();
+                client.connect(new InetSocketAddress(input[0], Integer.parseInt(input[1])), 5000);
+				if (!client.isConnected()) {
 					return false;
 				}
-                OutputStream outToServer = client.getOutputStream();
-                out = new BufferedWriter(new OutputStreamWriter(outToServer));
-            }else if(input.length == 0){
+				OutputStream outToServer = client.getOutputStream();
+				out = new BufferedWriter(new OutputStreamWriter(outToServer));
+			} else if (input.length == 0) {
 				client.close();
-			}else if(out != null){
-                out.write(input[0]);
-                out.flush();
-            }
-        } catch (IOException e) {
+			} else if (out != null) {
+				out.write(input[0]);
+				out.flush();
+			}
+		}catch (SocketTimeoutException e) {
+				return false;
+		}catch (IOException e) {
             e.printStackTrace();
         }
         return true;
@@ -116,7 +125,7 @@ public class NetworkTask extends AsyncTask<String, Void, Boolean>{
 	--
 	---------------------------------------------------------------------------------*/
 	protected void onPostExecute(Boolean result) {
-		if (result == false){
+		if (!result){
 			Toast.makeText(context, "Fail to connect to server",
 					Toast.LENGTH_LONG).show();
 			context.startActivity(new Intent(context, MainActivity.class));
