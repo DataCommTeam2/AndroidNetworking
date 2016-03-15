@@ -55,7 +55,7 @@ public class NetworkTask extends AsyncTask<String, Void, Boolean>{
 	--
 	---------------------------------------------------------------------------------*/
 	public NetworkTask(Context context) {
-		this.context = context.getApplicationContext();
+		this.context = context;
 	}
 
 	/*---------------------------------------------------------------------------------
@@ -80,9 +80,7 @@ public class NetworkTask extends AsyncTask<String, Void, Boolean>{
     protected Boolean doInBackground(String... input) {
         try {
 			if (input.length == 2) {
-				//client = new Socket(input[0], Integer.parseInt(input[1]));
-                client = new Socket();
-                client.connect(new InetSocketAddress(input[0], Integer.parseInt(input[1])), 5000);
+				client = new Socket(input[0], Integer.parseInt(input[1]));
 				if (!client.isConnected()) {
 					return false;
 				}
@@ -94,11 +92,9 @@ public class NetworkTask extends AsyncTask<String, Void, Boolean>{
 				out.write(input[0]);
 				out.flush();
 			}
-		}catch (SocketTimeoutException e) {
-				return false;
-		}catch (IOException e) {
-            e.printStackTrace();
-        }
+		}catch (Exception e) {
+			return false;
+		}
         return true;
     }
 
@@ -113,7 +109,7 @@ public class NetworkTask extends AsyncTask<String, Void, Boolean>{
 	--
 	--	INTERFACE:	protected void onPostExecute(Boolean result)
 	--
-	--  PARAMETERS: Boolean result result of doInBackground
+	--  PARAMETERS: Boolean connected result of doInBackground
 	--
 	--	RETURNS:	void
 	--
@@ -121,11 +117,13 @@ public class NetworkTask extends AsyncTask<String, Void, Boolean>{
 	--	Executes when the server fails to connect.
 	--
 	---------------------------------------------------------------------------------*/
-	protected void onPostExecute(Boolean result) {
-		if (!result){
+	protected void onPostExecute(Boolean connected) {
+		if (!connected){
 			Toast.makeText(context, "Fail to connect to server",
 					Toast.LENGTH_LONG).show();
-			context.startActivity(new Intent(context, MainActivity.class));
+			Intent intent = new Intent(context, MainActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			context.startActivity(intent);
 		}
 	}
 }
