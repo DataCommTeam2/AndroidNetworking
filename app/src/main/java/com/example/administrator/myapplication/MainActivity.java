@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /*---------------------------------------------------------------------------------
 --	CLASS FILE:	    MainActivity.java -
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 	/*---------------------------------------------------------------------------------
 	--	METHOD:     onCreate
 	--
-	--	DATE:		March 14, 2014
+	--	DATE:		March 14, 2016
 	--
 	--	DESIGNER:	Tom Tang
 	--
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 	/*---------------------------------------------------------------------------------
 	--	METHOD:     done
 	--
-	--	DATE:		March 14, 2014
+	--	DATE:		March 14, 2016
 	--
 	--	DESIGNER:	Tom Tang
 	--
@@ -77,14 +78,29 @@ public class MainActivity extends AppCompatActivity {
 
         EditText editText = (EditText) findViewById(R.id.name);
         String message = editText.getText().toString();
+		if (message.isEmpty())
+		{
+			Toast.makeText(this, R.string.enter_name, Toast.LENGTH_SHORT).show();
+			return;
+		}
         intent.putExtra("name", message);
 
         editText = (EditText) findViewById(R.id.ip);
         message = editText.getText().toString();
+		if (message.isEmpty())
+		{
+			Toast.makeText(this, R.string.enter_address, Toast.LENGTH_SHORT).show();
+			return;
+		}
         intent.putExtra("ip", message);
 
         editText = (EditText) findViewById(R.id.port);
         message = 0 + editText.getText().toString();
+		if (message.isEmpty())
+		{
+			Toast.makeText(this, R.string.enter_port, Toast.LENGTH_SHORT).show();
+			return;
+		}
         intent.putExtra("port", message);
 
         startActivity(intent);

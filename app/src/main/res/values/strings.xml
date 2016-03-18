@@ -1,4 +1,12 @@
 <resources>
-    <string name="app_name">My Application</string>
-    <string name="title_activity_main">Main</string>
+    <string name="app_name">Android GPS</string>
+    <string name="title_activity_main">Android GPS</string>
+    <string name="log_in_button">Log In</string>
+    <string name="name_hint">User Name</string>
+    <string name="address_hint">IP Address</string>
+    <string name="port_number_hint">Port Number</string>
+    <string name="enter_name">Please enter user name</string>
+    <string name="enter_address">Please enter IP address</string>
+    <string name="enter_port">Please enter port number</string>
+    <string name="connection_error">Failed to connect to server</string>
 </resources>
