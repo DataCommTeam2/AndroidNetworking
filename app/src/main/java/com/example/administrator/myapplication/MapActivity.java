@@ -71,7 +71,7 @@ public class MapActivity extends FragmentActivity
 	/*---------------------------------------------------------------------------------
 	--	METHOD:     onCreate
 	--
-	--	DATE:		March 14, 2014
+	--	DATE:		March 14, 2016
 	--
 	--	DESIGNER:	Tom Tang
 	--
@@ -117,7 +117,7 @@ public class MapActivity extends FragmentActivity
 	/*---------------------------------------------------------------------------------
 	--	METHOD:     onMapReady
 	--
-	--	DATE:		March 14, 2014
+	--	DATE:		March 14, 2016
 	--
 	--	DESIGNER:	Tom Tang
 	--
@@ -145,7 +145,7 @@ public class MapActivity extends FragmentActivity
 	/*---------------------------------------------------------------------------------
 	--	METHOD:     enableMyLocation
 	--
-	--	DATE:		March 14, 2014
+	--	DATE:		March 14, 2016
 	--
 	--	DESIGNER:	Tom Tang
 	--
@@ -176,7 +176,7 @@ public class MapActivity extends FragmentActivity
 	/*---------------------------------------------------------------------------------
 	--	METHOD:     onRequestPermissionsResult
 	--
-	--	DATE:		March 14, 2014
+	--	DATE:		March 14, 2016
 	--
 	--	DESIGNER:	Tom Tang
 	--
@@ -205,7 +205,7 @@ public class MapActivity extends FragmentActivity
 	/*---------------------------------------------------------------------------------
 	--	METHOD:     onDestroy
 	--
-	--	DATE:		March 14, 2014
+	--	DATE:		March 14, 2016
 	--
 	--	DESIGNER:	Tom Tang
 	--
@@ -231,7 +231,7 @@ public class MapActivity extends FragmentActivity
 	/*---------------------------------------------------------------------------------
 	--	METHOD:     onConnected
 	--
-	--	DATE:		March 14, 2014
+	--	DATE:		March 14, 2016
 	--
 	--	DESIGNER:	Tom Tang
 	--
@@ -259,7 +259,7 @@ public class MapActivity extends FragmentActivity
 		/*---------------------------------------------------------------------------------
 		--	METHOD:     run
 		--
-		--	DATE:		March 14, 2014
+		--	DATE:		March 14, 2016
 		--
 		--	DESIGNER:	Tom Tang
 		--
@@ -308,7 +308,7 @@ public class MapActivity extends FragmentActivity
 	/*---------------------------------------------------------------------------------
 	--	METHOD:     onMyLocationButtonClick
 	--
-	--	DATE:		March 14, 2014
+	--	DATE:		March 14, 2016
 	--
 	--	DESIGNER:	Tom Tang
 	--

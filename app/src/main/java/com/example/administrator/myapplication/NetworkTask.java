@@ -4,14 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
-
-import java.io.IOException;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
-import java.net.SocketTimeoutException;
 
 /*---------------------------------------------------------------------------------
 --	CLASS FILE:	    NetworkTask.java -
@@ -40,7 +36,7 @@ public class NetworkTask extends AsyncTask<String, Void, Boolean>{
 	/*---------------------------------------------------------------------------------
 	--	Constructor:     NetworkTask
 	--
-	--	DATE:		March 14, 2014
+	--	DATE:		March 14, 2016
 	--
 	--	DESIGNER:	Tom Tang
 	--
@@ -61,7 +57,7 @@ public class NetworkTask extends AsyncTask<String, Void, Boolean>{
 	/*---------------------------------------------------------------------------------
 	--	METHOD:     doInBackground
 	--
-	--	DATE:		March 14, 2014
+	--	DATE:		March 14, 2016
 	--
 	--	DESIGNER:	Tom Tang
 	--
@@ -101,7 +97,7 @@ public class NetworkTask extends AsyncTask<String, Void, Boolean>{
 	/*---------------------------------------------------------------------------------
 	--	METHOD:     onPostExecute
 	--
-	--	DATE:		March 14, 2014
+	--	DATE:		March 14, 2016
 	--
 	--	DESIGNER:	Tom Tang
 	--
@@ -119,7 +115,7 @@ public class NetworkTask extends AsyncTask<String, Void, Boolean>{
 	---------------------------------------------------------------------------------*/
 	protected void onPostExecute(Boolean connected) {
 		if (!connected){
-			Toast.makeText(context, "Fail to connect to server",
+			Toast.makeText(context, context.getString(R.string.connection_error),
 					Toast.LENGTH_LONG).show();
 			Intent intent = new Intent(context, MainActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
