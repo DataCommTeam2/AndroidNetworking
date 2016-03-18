@@ -3,8 +3,10 @@ package com.example.administrator.myapplication;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
@@ -76,10 +78,8 @@ public class NetworkTask extends AsyncTask<String, Void, Boolean>{
     protected Boolean doInBackground(String... input) {
         try {
 			if (input.length == 2) {
-				client = new Socket(input[0], Integer.parseInt(input[1]));
-				if (!client.isConnected()) {
-					return false;
-				}
+				client = new Socket();
+				client.connect(new InetSocketAddress(input[0], Integer.parseInt(input[1])), 500);
 				OutputStream outToServer = client.getOutputStream();
 				out = new BufferedWriter(new OutputStreamWriter(outToServer));
 			} else if (input.length == 0) {
