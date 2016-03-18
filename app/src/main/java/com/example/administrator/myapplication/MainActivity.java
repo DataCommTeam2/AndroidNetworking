@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
         editText = (EditText) findViewById(R.id.port);
         message = 0 + editText.getText().toString();
-		if (message.isEmpty())
+		if (message.equals("0"))
 		{
 			Toast.makeText(this, R.string.enter_port, Toast.LENGTH_SHORT).show();
 			return;
