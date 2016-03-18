@@ -95,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("ip", message);
 
         editText = (EditText) findViewById(R.id.port);
-        message = 0 + editText.getText().toString();
-		if (message.equals("0"))
+        message = editText.getText().toString();
+		if (message.isEmpty())
 		{
 			Toast.makeText(this, R.string.enter_port, Toast.LENGTH_SHORT).show();
 			return;
