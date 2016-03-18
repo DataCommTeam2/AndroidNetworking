@@ -31,7 +31,6 @@
 
         <activity
             android:name=".MainActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_main" >
 
             <intent-filter>
@@ -41,7 +40,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MapActivity" >
+        <activity android:name=".MapActivity"
+				  android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
     </application>
 
